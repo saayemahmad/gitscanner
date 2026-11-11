@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>RENEWAL BLOOD NETWORK | রক্তের প্রয়োজনে, মানুষের পাশে</title>
+  <meta name="description" content="রিনিউয়েল ব্লাড নেটওয়ার্ক — বাংলাদেশের সবচেয়ে নির্ভরযোগ্য রক্তদাতা নেটওয়ার্ক। রক্তদাতা খুঁজুন, নিবন্ধন করুন এবং জীবন বাঁচান।" />
+  <meta property="og:title" content="RENEWAL BLOOD NETWORK" />
+  <meta property="og:description" content="রক্তের প্রয়োজনে, মানুষের পাশে" />
+  <meta name="theme-color" content="#E11D48" />
+
+  <!-- Anti-Cache Meta Tags (Browser always re-fetches latest updates) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+
+  <!-- Leaflet (jsDelivr CDN - Fast & Globally Reliable) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Google Identity Services (GIS) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a class="navbar-brand" onclick="App.navigate('home');return false;" href="#home">
+      <div class="brand-icon"><i class="fas fa-droplet"></i></div>
+      <div>
+        <div class="brand-name">RENEWAL BLOOD NETWORK</div>
+        <div class="brand-tagline">রক্তের প্রয়োজনে, মানুষের পাশে</div>
+      </div>
+    </a>
+
+    <ul class="navbar-nav">
+      <li><a href="#home"         data-nav="home"        data-page="home">হোম</a></li>
+      <li><a href="#find-donor"   data-nav="find-donor"  data-page="find-donor"><i class="fas fa-magnifying-glass"></i> দাতা খুঁজুন</a></li>
+      <li id="nav-register-li"><a href="#register" id="nav-register-link" data-nav="register" data-page="register"><i class="fas fa-pen-to-square"></i> নিবন্ধন</a></li>
+      <li><a href="#dashboard"    data-nav="dashboard"   data-page="dashboard"><i class="fas fa-user"></i> ড্যাশবোর্ড</a></li>
+      <li><a href="#map"          data-nav="map"         data-page="map"><i class="fas fa-map"></i> ম্যাপ</a></li>
+      <li><a href="#leaderboard"  data-nav="leaderboard" data-page="leaderboard"><i class="fas fa-trophy"></i> লিডারবোর্ড</a></li>
+    </ul>
+
+    <div class="navbar-actions">
+      <div class="live-indicator-badge" id="live-indicator-badge" title="রিয়েল-টাইম লাইভ সিঙ্ক সক্রিয়">
+        <span class="live-dot"></span> <span class="live-text">LIVE</span>
+      </div>
+      <button class="btn btn-ghost" id="nav-login-btn" onclick="Modal.open('auth-modal')" style="padding:0.5rem;font-family:var(--font-bn);display:none;">লগইন</button>
+      <button class="btn btn-ghost" id="nav-logout-btn" onclick="DataStore.logout()" style="padding:0.5rem;font-family:var(--font-bn);display:none;">লগআউট</button>
+      <a href="#emergency" data-page="emergency" class="nav-emergency-btn">
+        <i class="fas fa-triangle-exclamation"></i> <span class="nav-emergency-text">জরুরি রক্ত</span>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu Drawer Overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-menu-drawer">
+    <div class="mobile-drawer-header">
+      <div class="mobile-drawer-brand">
+        <i class="fas fa-droplet"></i> <span>RENEWAL BLOOD</span>
+      </div>
+      <button class="mobile-drawer-close" onclick="App.closeMobileMenu()" aria-label="Close menu">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Active User Card (Shown when logged in) -->
+    <div class="mobile-user-card" id="mobile-user-card" style="display:none;">
+      <div class="mobile-user-avatar" id="mobile-user-avatar">র</div>
+      <div class="mobile-user-info">
+        <div class="mobile-user-name" id="mobile-user-name">ইউজার</div>
+        <div class="mobile-user-phone" id="mobile-user-phone"></div>
+      </div>
+    </div>
+
+    <div class="mobile-nav-links">
+      <a href="#home"         data-page="home"><i class="fas fa-house"></i> হোম</a>
+      <a href="#find-donor"   data-page="find-donor"><i class="fas fa-magnifying-glass"></i> দাতা খুঁজুন</a>
+      <a href="#register" id="mobile-register-link" data-page="register"><i class="fas fa-pen-to-square"></i> নিবন্ধন</a>
+      <a href="#emergency"    data-page="emergency"><i class="fas fa-triangle-exclamation"></i> জরুরি রক্ত</a>
+      <a href="#dashboard"    data-page="dashboard"><i class="fas fa-user"></i> ড্যাশবোর্ড</a>
+      <a href="#map"          data-page="map"><i class="fas fa-map"></i> ম্যাপ</a>
+      <a href="#leaderboard"  data-page="leaderboard"><i class="fas fa-trophy"></i> লিডারবোর্ড</a>
+    </div>
+
+    <div class="mobile-drawer-footer">
+      <button class="btn btn-primary btn-full" id="mobile-login-btn" onclick="Modal.open('auth-modal'); App.closeMobileMenu();" style="display:none;font-family:var(--font-bn);"><i class="fas fa-arrow-right-to-bracket"></i> লগইন</button>
+      <button class="btn btn-ghost btn-full" id="mobile-logout-btn" onclick="DataStore.logout(); App.closeMobileMenu();" style="display:none;font-family:var(--font-bn);"><i class="fas fa-arrow-right-from-bracket"></i> লগআউট</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     PAGE VIEWS
+════════════════════════════════════════════ -->
+
+<!-- ─────────────────────────────────
+     HOME
+───────────────────────────────── -->
+<div id="view-home" class="page-view">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="live-dot"></span>
+        লাইভ • বাংলাদেশ জুড়ে সক্রিয়
+      </div>
+
+      <h1>
+        রক্তদানে <span class="highlight">জীবন বাঁচান,</span><br/>
+        একটি রক্তদান পারে<br/>বদলে দিতে একজনের জীবন
+      </h1>
+
+      <p class="hero-tagline">
+        বাংলাদেশের সবচেয়ে নির্ভরযোগ্য রক্তদাতা নেটওয়ার্ক — যাচাইকৃত দাতা, জরুরি সংযোগ, এবং স্বচ্ছ সিস্টেম
+      </p>
+
+      <!-- 3 Big CTA Cards -->
+      <div class="hero-cta-grid">
+        <div class="cta-card cta-card--find" data-page="find-donor">
+          <div class="cta-icon cta-icon--find"><i class="fas fa-magnifying-glass"></i></div>
+          <div class="cta-title">আমার রক্ত দরকার</div>
+          <p class="cta-sub">রক্তের গ্রুপ ও এলাকা অনুযায়ী কাছের যাচাইকৃত দাতা খুঁজুন</p>
+          <button class="cta-btn" data-page="find-donor">রক্তদাতা খুঁজুন <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <div class="cta-card cta-card--register" id="home-cta-register" data-page="register">
+          <div class="cta-icon cta-icon--register"><i class="fas fa-syringe"></i></div>
+          <div class="cta-title" id="home-cta-register-title">আমি রক্ত দিতে চাই</div>
+          <p class="cta-sub" id="home-cta-register-sub">রক্তদাতা হিসেবে নিবন্ধন করুন এবং জীবন বাঁচানোর অংশ হোন</p>
+          <button class="cta-btn" id="home-cta-register-btn" data-page="register">নিবন্ধন করুন <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <div class="cta-card cta-card--emergency" data-page="emergency">
+          <div class="cta-icon cta-icon--emergency"><i class="fas fa-circle-exclamation"></i></div>
+          <div class="cta-title">জরুরি রক্ত দরকার</div>
+          <p class="cta-sub">এখনই আবেদন করুন। Renewal Foundation যাচাই করে দ্রুত সাহায্য করবে</p>
+          <button class="cta-btn" data-page="emergency">এখনই আবেদন <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value" data-target="0">0</span>
+          <div class="hero-stat-label">নিবন্ধিত দাতা</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" data-target="0">0</span>
+          <div class="hero-stat-label">যাচাইকৃত দাতা</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" data-target="0">0</span>
+          <div class="hero-stat-label">এখন উপলব্ধ</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" data-target="0">0</span>
+          <div class="hero-stat-label">জেলায় সক্রিয়</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-line"></div>
+
+  <!-- Emergency Feed -->
+  <section class="emergency-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag"><i class="fas fa-signal"></i> LIVE</span>
+        <h2>জরুরি রক্তের অনুরোধ</h2>
+        <p>বর্তমানে যাচাইকৃত ও পর্যালোচনাধীন অনুরোধসমূহ</p>
+      </div>
+      <div class="emergency-grid" id="home-emergency-feed">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="text-center mt-xl">
+        <button class="btn btn-outline btn-lg" data-page="emergency">সব অনুরোধ দেখুন <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-line"></div>
+
+  <!-- Blood Group Overview -->
+  <section class="bg-overview">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">রক্তের গ্রুপ</span>
+        <h2>বর্তমান রক্তের গ্রুপের পরিস্থিতি</h2>
+        <p>প্রতিটি গ্রুপে মোট দাতা ও এখন উপলব্ধ দাতার সংখ্যা</p>
+      </div>
+      <div class="bg-overview-grid" id="bg-overview-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Life Savers Leaderboard Showcase on Home -->
+  <section class="home-leaderboard-showcase" style="padding:var(--space-2xl) 0;background:linear-gradient(180deg, #FEFCE8 0%, var(--bg-surface) 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="container">
+      <div class="section-header text-center" style="margin-bottom:var(--space-2xl)">
+        <span class="section-tag"><i class="fas fa-trophy"></i> লিডারবোর্ড</span>
+        <h2 style="font-family:var(--font-bn)">শীর্ষ জীবন রক্ষাকারী রক্তদাতা</h2>
+        <p style="font-family:var(--font-bn);color:var(--text-secondary)">যারা সর্বোচ্চ রক্তদান করে সবচেয়ে বেশি মানুষের পাশে দাঁড়িয়েছেন</p>
+      </div>
+      <div class="top-3-grid" id="home-top3-grid">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="text-center" style="margin-top:var(--space-xl)">
+        <button class="btn btn-outline btn-lg" onclick="App.navigate('leaderboard')">
+          <i class="fas fa-ranking-star"></i> সম্পূর্ণ লিডারবোর্ড দেখুন <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">কীভাবে কাজ করে</span>
+        <h2>মাত্র কয়েকটি ধাপে রক্ত পান</h2>
+      </div>
+      <div class="hiw-grid">
+        <div class="hiw-card anim-fadeInUp">
+          <span class="hiw-step">১</span>
+          <span class="hiw-icon"><i class="fas fa-magnifying-glass"></i></span>
+          <div class="hiw-title">রক্তের গ্রুপ ও এলাকা দিন</div>
+          <p class="hiw-desc">প্রয়োজনীয় রক্তের গ্রুপ এবং হাসপাতালের এলাকা দিয়ে খুঁজুন</p>
+        </div>
+        <div class="hiw-card anim-fadeInUp delay-100">
+          <span class="hiw-step">২</span>
+          <span class="hiw-icon"><i class="fas fa-shield-halved"></i></span>
+          <div class="hiw-title">যাচাইকৃত দাতা খুঁজুন</div>
+          <p class="hiw-desc">Trust Score ও Verification Level দেখে নির্ভরযোগ্য দাতা বেছে নিন</p>
+        </div>
+        <div class="hiw-card anim-fadeInUp delay-200">
+          <span class="hiw-step">৩</span>
+          <span class="hiw-icon"><i class="fas fa-paper-plane"></i></span>
+          <div class="hiw-title">যোগাযোগের অনুরোধ করুন</div>
+          <p class="hiw-desc">Privacy রক্ষা করে Renewal Foundation-এর মাধ্যমে দাতার সাথে যোগাযোগ করুন</p>
+        </div>
+        <div class="hiw-card anim-fadeInUp delay-300">
+          <span class="hiw-step">৪</span>
+          <span class="hiw-icon"><i class="fas fa-droplet"></i></span>
+          <div class="hiw-title">রক্ত পান, জীবন বাঁচুক</div>
+          <p class="hiw-desc">Renewal Foundation নিশ্চিত করে সফল সংযোগ এবং জীবন রক্ষা পায়</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--bg-void);border-top:1px solid var(--border);padding:var(--space-2xl) 0;text-align:center">
+    <div class="container">
+      <div style="font-family:var(--font-bn);font-size:1.1rem;font-weight:700;color:var(--blood-red);margin-bottom:0.5rem"><i class="fas fa-droplet"></i> RENEWAL BLOOD NETWORK</div>
+      <div style="font-family:var(--font-bn);color:var(--text-muted);font-size:0.9rem">রক্তের প্রয়োজনে, মানুষের পাশে</div>
+      <div style="color:var(--text-muted);font-size:0.8rem;margin-top:var(--space-md)">© 2026 Renewal Foundation Bangladesh. সর্বস্বত্ব সংরক্ষিত।</div>
+    </div>
+  </footer>
+</div>
+
+
+<!-- ─────────────────────────────────
+     FIND DONOR
+───────────────────────────────── -->
+<div id="view-find-donor" class="page-view search-page">
+  <div class="search-hero">
+    <div class="container">
+      <span class="section-tag"><i class="fas fa-magnifying-glass"></i> দাতা খুঁজুন</span>
+      <h1>রক্তদাতা অনুসন্ধান</h1>
+      <p style="font-family:var(--font-bn)">আপনার প্রয়োজন অনুযায়ী কাছের যাচাইকৃত রক্তদাতা খুঁজুন</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:var(--space-xl)">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-grid">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">রক্তের গ্রুপ</label>
+          <select class="form-control" id="s-blood-group">
+            <option value="">সব গ্রুপ</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">জেলা</label>
+          <select class="form-control" id="s-district">
+            <option value="">সব জেলা</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">উপজেলা</label>
+          <select class="form-control" id="s-upazila">
+            <option value="">সব উপজেলা</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">অবস্থা</label>
+          <select class="form-control" id="s-availability">
+            <option value="">সবাই</option>
+            <option value="available">এখন উপলব্ধ</option>
+            <option value="soon">শীঘ্রই</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-primary btn-full" onclick="DonorModule.doSearch()">
+            <i class="fas fa-magnifying-glass"></i> খুঁজুন
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="search-results">
+      <div class="search-results-header">
+        <h3 id="result-count" style="font-family:var(--font-bn)">অনুসন্ধান করুন</h3>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-bn)">ট্রাস্ট স্কোর অনুযায়ী সাজানো</span>
+        </div>
+      </div>
+      <div class="donor-grid" id="donor-results">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     DONOR REGISTRATION
+───────────────────────────────── -->
+<div id="view-register" class="page-view register-page">
+  <div class="page-header">
+    <span class="section-tag"><i class="fas fa-pen-to-square"></i> নিবন্ধন</span>
+    <h1>রক্তদাতা হিসেবে নিবন্ধন করুন</h1>
+    <p>আপনার তথ্য সম্পূর্ণ সুরক্ষিত। NID কখনো public করা হবে না।</p>
+  </div>
+
+  <div class="register-container">
+    <div class="register-card" id="register-form-card">
+      <!-- Wizard Steps -->
+      <div class="wizard-steps">
+        <div class="wizard-step active">
+          <div class="wizard-step-num">১</div>
+          <div class="wizard-step-label">ব্যক্তিগত তথ্য</div>
+        </div>
+        <div class="wizard-step">
+          <div class="wizard-step-num">২</div>
+          <div class="wizard-step-label">রক্তদানের তথ্য</div>
+        </div>
+        <div class="wizard-step">
+          <div class="wizard-step-num">৩</div>
+          <div class="wizard-step-label">OTP যাচাই</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Personal Info -->
+      <div class="wizard-pane active" id="r-step1">
+        <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-lg)">ব্যক্তিগত তথ্য</h3>
+
+        <!-- Google Fast-Fill Option -->
+        <div id="google-signup-banner" style="background:var(--bg-secondary, #f8fafc);border:1px solid var(--border-color, #e2e8f0);border-radius:var(--radius-md, 10px);padding:0.85rem 1.1rem;margin-bottom:var(--space-lg);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <svg style="width:20px;height:20px;flex-shrink:0;" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <div>
+              <div style="font-family:var(--font-bn);font-size:0.92rem;color:var(--text-primary);font-weight:600;">Google দিয়ে এক ক্লিকে নিবন্ধন</div>
+              <div style="font-family:var(--font-bn);font-size:0.8rem;color:var(--text-secondary);">নাম ও পরিচয় স্বয়ংক্রিয়ভাবে যাচাই করতে পারেন</div>
+            </div>
+          </div>
+          <div id="google-signup-container"></div>
+          <div id="google-verified-badge" style="display:none;background:rgba(34,197,94,0.12);color:#16a34a;border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:0.35rem 0.85rem;font-size:0.84rem;font-weight:600;font-family:var(--font-bn);align-items:center;gap:0.4rem;"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">পূর্ণ নাম <span class="required">*</span></label>
+            <input type="text" class="form-control" id="r-name" placeholder="আপনার পূর্ণ নাম লিখুন" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">মোবাইল নম্বর <span class="required">*</span></label>
+            <input type="tel" class="form-control" id="r-phone" placeholder="01XXXXXXXXX" maxlength="11" />
+            <div id="r-phone-feedback" style="display:none;margin-top:0.35rem;font-family:var(--font-bn);"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">বিকল্প নম্বর <span class="optional">(ঐচ্ছিক)</span></label>
+            <input type="tel" class="form-control" id="r-alt-phone" placeholder="01XXXXXXXXX" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">বয়স <span class="required">*</span></label>
+            <input type="number" class="form-control" id="r-age" placeholder="বয়স (১৮-৬০)" min="18" max="60" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">জেলা <span class="required">*</span></label>
+            <select class="form-control" id="r-district">
+              <option value="">জেলা বেছে নিন</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">উপজেলা/থানা</label>
+            <select class="form-control" id="r-upazila">
+              <option value="">উপজেলা/থানা বেছে নিন</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">এলাকা</label>
+            <input type="text" class="form-control" id="r-area" placeholder="মহল্লা/পাড়ার নাম" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">লিঙ্গ <span class="optional">(ঐচ্ছিক)</span></label>
+            <select class="form-control" id="r-gender">
+              <option value="">পছন্দ করুন</option>
+              <option>পুরুষ</option>
+              <option>মহিলা</option>
+              <option>অন্যান্য</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">পেশা <span class="optional">(ঐচ্ছিক)</span></label>
+          <input type="text" class="form-control" id="r-profession" placeholder="আপনার পেশা" />
+        </div>
+
+        <!-- Cloudflare Turnstile Verification -->
+        <div class="turnstile-container-wrapper" style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin:1.5rem auto 1rem;min-height:70px;">
+          <div id="cf-turnstile-container"></div>
+          <div id="turnstile-error" style="display:none;color:var(--blood-red);font-size:0.85rem;margin-top:0.4rem;font-family:var(--font-bn);font-weight:600;">
+            <i class="fas fa-circle-exclamation"></i> অনুগ্রহ করে ক্যাপচা (Turnstile) যাচাই সম্পন্ন করুন
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:var(--space-lg)">
+          <button class="btn btn-primary btn-lg" onclick="DonorModule.nextStep()">পরবর্তী ধাপ <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 2: Donation Info -->
+      <div class="wizard-pane" id="r-step2">
+        <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-lg)">রক্তদানের তথ্য</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">রক্তের গ্রুপ <span class="required">*</span></label>
+            <select class="form-control" id="r-blood-group">
+              <option value="">গ্রুপ বেছে নিন</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">সর্বশেষ রক্তদানের তারিখ</label>
+            <input type="date" class="form-control" id="r-last-donation" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">মোট কতবার রক্ত দিয়েছেন?</label>
+            <input type="number" class="form-control" id="r-donation-count" placeholder="০" min="0" max="999" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">বর্তমানে রক্ত দিতে পারবেন?</label>
+            <select class="form-control" id="r-can-donate">
+              <option value="yes">হ্যাঁ</option>
+              <option value="no">না</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">পরবর্তী সম্ভাব্য রক্তদানের তারিখ</label>
+          <input type="date" class="form-control" id="r-next-date" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">কোন ধরনের রক্ত দিতে পারেন?</label>
+          <div class="check-group" id="r-donation-types"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">যোগাযোগের পছন্দ</label>
+          <div class="check-group">
+            <label class="check-item">
+              <input type="checkbox" id="cp-phone" checked>
+              <label for="cp-phone"><i class="fas fa-phone"></i> ফোন</label>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="cp-sms">
+              <label for="cp-sms"><i class="fas fa-comment-sms"></i> SMS</label>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="cp-whatsapp">
+              <label for="cp-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</label>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" id="cp-renewal" checked>
+              <label for="cp-renewal"><i class="fas fa-droplet"></i> Renewal Foundation-এর মাধ্যমে</label>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="check-item" style="padding:0">
+            <input type="checkbox" id="r-emergency-call" checked>
+            <label for="r-emergency-call" style="font-weight:600;color:var(--blood-red)"><i class="fas fa-triangle-exclamation"></i> জরুরি Call গ্রহণ করব</label>
+          </label>
+        </div>
+
+        <!-- Blood Group Proof Upload -->
+        <div class="form-group" style="margin-top:var(--space-md)">
+          <label class="form-label">রক্তের গ্রুপের প্রমাণ <span class="optional">(Level 3 Verification-এর জন্য)</span></label>
+          <div class="file-upload-area" onclick="document.getElementById('r-proof-file').click()">
+            <div class="upload-icon"><i class="fas fa-file-arrow-up"></i></div>
+            <p>Blood test report / Donor card / Hospital report আপলোড করুন</p>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem">JPG, PNG, PDF &mdash; সর্বোচ্চ ৫ MB</p>
+            <input type="file" id="r-proof-file" accept=".jpg,.png,.pdf" style="display:none" onchange="document.querySelector('.file-upload-area p').textContent='✔ ফাইল নির্বাচিত: '+this.files[0]?.name" />
+          </div>
+        </div>
+
+        <div style="display:flex;gap:var(--space-md);justify-content:space-between;margin-top:var(--space-lg)">
+          <button class="btn btn-ghost btn-lg" onclick="DonorModule.prevStep()"><i class="fas fa-arrow-left"></i> পূর্ববর্তী</button>
+          <button class="btn btn-primary btn-lg" onclick="DonorModule.goToStep3()">অ্যাকাউন্ট তৈরি <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 3: Account Security (PIN) -->
+      <div class="wizard-pane" id="r-step3">
+        <div style="text-align:center;padding:var(--space-md) 0">
+          <div class="otp-page-icon"><i class="fas fa-lock"></i></div>
+          <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-sm)">অ্যাকাউন্ট সুরক্ষা</h3>
+          <p style="font-family:var(--font-bn);color:var(--text-secondary);margin-bottom:var(--space-lg)">ভবিষ্যতে লগইন করার জন্য একটি ৪-ডিজিট গোপন পিন সেট করুন</p>
+          
+          <div style="max-width:250px;margin:0 auto var(--space-md)">
+            <input type="password" id="r-pin" class="form-control" placeholder="••••" maxlength="4" inputmode="numeric" style="text-align:center;font-size:2rem;letter-spacing:1rem;height:60px" />
+          </div>
+
+          <!-- Step 3 Turnstile Status -->
+          <div id="step3-turnstile-status" style="margin:1rem auto 1.5rem;">
+            <div style="display:inline-flex;align-items:center;gap:0.4rem;background:#ECFDF5;color:#059669;padding:0.45rem 0.95rem;border-radius:var(--radius-full);font-size:0.88rem;font-family:var(--font-bn);font-weight:600;border:1px solid #A7F3D0;">
+              <i class="fas fa-circle-check"></i> রোবট যাচাই সম্পন্ন
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg btn-full" id="r-submit-btn" onclick="DonorModule.submitRegistration()">
+            <i class="fas fa-circle-check"></i> অ্যাকাউন্ট তৈরি করুন ও নিবন্ধন সম্পন্ন করুন
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div id="register-success" style="display:none;text-align:center;padding:var(--space-2xl)">
+      <div class="reg-success-icon anim-heartbeat"><i class="fas fa-circle-check"></i></div>
+      <h2 style="font-family:var(--font-bn);color:var(--verified-green);margin-bottom:var(--space-sm)">নিবন্ধন সম্পন্ন!</h2>
+      <p style="font-family:var(--font-bn);font-size:1.1rem;margin-bottom:var(--space-md)">
+        স্বাগতম, <strong id="reg-success-name"></strong>!<br/>
+        আপনি সফলভাবে Renewal Blood Network-এ যোগ দিয়েছেন।
+      </p>
+      <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-lg);padding:var(--space-lg);margin:var(--space-xl) auto;max-width:320px">
+        <div style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-bn)">আপনার Donor ID</div>
+        <div style="font-family:var(--font-mono);font-size:1.3rem;font-weight:800;color:var(--blood-light)" id="reg-success-id"></div>
+        <div style="margin-top:var(--space-md)">
+          <span class="verify-chip done"><i class="fas fa-mobile"></i> মোবাইল যাচাই <i class="fas fa-check"></i></span>
+        </div>
+        <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-bn)">
+          পরিচয় ও রক্তের গ্রুপ যাচাইয়ের জন্য Renewal Foundation যোগাযোগ করবে।
+        </div>
+      </div>
+      <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" data-page="dashboard"><i class="fas fa-gauge"></i> ড্যাশবোর্ড দেখুন</button>
+        <button class="btn btn-ghost btn-lg" data-page="home"><i class="fas fa-house"></i> হোমে যান</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     EMERGENCY REQUEST
+───────────────────────────────── -->
+<div id="view-emergency" class="page-view emergency-page">
+  <div class="emergency-page-header">
+    <div class="container">
+      <span class="emergency-pulse-indicator">
+        <span class="live-dot"></span>
+        জরুরি সহায়তা
+      </span>
+      <h1><i class="fas fa-triangle-exclamation" style="color:#FF1744"></i> জরুরি রক্তের অনুরোধ</h1>
+      <p style="font-family:var(--font-bn);color:var(--text-secondary);max-width:500px;margin:0 auto">
+        আবেদন জমা দিন — Renewal Foundation দ্রুত যাচাই করে ম্যাচিং দাতা খুঁজে দেবে
+      </p>
+    </div>
+  </div>
+
+  <div class="emergency-form-container">
+
+    <!-- Request Form -->
+    <div id="emergency-form-section">
+      <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-xl);display:flex;align-items:center;gap:0.5rem">
+        <i class="fas fa-plus-circle" style="color:var(--blood-red)"></i> নতুন জরুরি অনুরোধ
+      </h3>
+
+      <div class="emergency-form-card">
+        <!-- Wizard -->
+        <div class="wizard-steps" id="emergency-wizard">
+          <div class="wizard-step active">
+            <div class="wizard-step-num">১</div>
+            <div class="wizard-step-label">রোগীর তথ্য</div>
+          </div>
+          <div class="wizard-step">
+            <div class="wizard-step-num">২</div>
+            <div class="wizard-step-label">হাসপাতাল</div>
+          </div>
+          <div class="wizard-step">
+            <div class="wizard-step-num">৩</div>
+            <div class="wizard-step-label">OTP যাচাই</div>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="wizard-pane active">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">রোগীর নাম <span class="required">*</span></label>
+              <input type="text" class="form-control" id="eq-patient" placeholder="রোগীর পূর্ণ নাম" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">রক্তের গ্রুপ <span class="required">*</span></label>
+              <select class="form-control" id="eq-blood-group">
+                <option value="">গ্রুপ বেছে নিন</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">প্রয়োজনীয় ব্যাগ <span class="required">*</span></label>
+              <input type="number" class="form-control" id="eq-units" placeholder="কতটি ব্যাগ?" min="1" max="10" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">কারণ / রোগ</label>
+              <input type="text" class="form-control" id="eq-reason" placeholder="যেমন: অস্ত্রোপচার, দুর্ঘটনা..." />
+            </div>
+          </div>
+
+          <!-- Cloudflare Turnstile Verification on Step 1 -->
+          <div class="turnstile-container-wrapper" style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin:1.5rem auto 1rem;min-height:70px;">
+            <div id="eq-turnstile-container"></div>
+            <div id="eq-turnstile-error" style="display:none;color:var(--blood-red);font-size:0.85rem;margin-top:0.4rem;font-family:var(--font-bn);font-weight:600;">
+              <i class="fas fa-circle-exclamation"></i> অনুগ্রহ করে ক্যাপচা (Turnstile) যাচাই সম্পন্ন করুন
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:var(--space-lg)">
+            <button class="btn btn-emergency btn-lg" onclick="EmergencyModule.nextStep()">পরবর্তী →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="wizard-pane">
+          <div class="form-group">
+            <label class="form-label">হাসপাতালের নাম <span class="required">*</span></label>
+            <input type="text" class="form-control" id="eq-hospital" placeholder="হাসপাতাল / ক্লিনিকের নাম" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">জেলা</label>
+              <select class="form-control" id="eq-district">
+                <option value="">জেলা বেছে নিন</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">উপজেলা</label>
+              <select class="form-control" id="eq-upazila">
+                <option value="">উপজেলা বেছে নিন</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">প্রয়োজনের তারিখ</label>
+              <input type="date" class="form-control" id="eq-date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">প্রয়োজনের সময়</label>
+              <input type="time" class="form-control" id="eq-time" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">আবেদনকারীর নাম <span class="required">*</span></label>
+              <input type="text" class="form-control" id="eq-attendant" placeholder="রোগীর পরিচিত/আত্মীয়" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">যোগাযোগ নম্বর <span class="required">*</span></label>
+              <input type="tel" class="form-control" id="eq-contact" placeholder="01XXXXXXXXX" />
+            </div>
+          </div>
+
+          <!-- Document Upload -->
+          <div class="form-group">
+            <label class="form-label">হাসপাতালের কাগজ আপলোড <span class="optional">(যাচাই দ্রুত হবে)</span></label>
+            <div class="file-upload-area" onclick="document.getElementById('eq-doc').click()">
+              <div class="upload-icon"><i class="fas fa-hospital"></i></div>
+              <p>Prescription / Blood Requisition / Hospital Letter</p>
+              <input type="file" id="eq-doc" style="display:none" accept=".jpg,.png,.pdf" />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:var(--space-md);justify-content:space-between;margin-top:var(--space-lg)">
+            <button class="btn btn-ghost btn-lg" onclick="EmergencyModule.prevStep()"><i class="fas fa-arrow-left"></i> পূর্ববর্তী</button>
+            <button class="btn btn-emergency btn-lg" onclick="EmergencyModule.nextStep()">OTP পাঠান <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3: Account / Submit -->
+        <div class="wizard-pane">
+          <div style="text-align:center">
+            <div class="otp-page-icon"><i class="fas fa-lock"></i></div>
+            <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-sm)">অ্যাকাউন্ট সুরক্ষা</h3>
+            <p style="font-family:var(--font-bn);color:var(--text-secondary);margin-bottom:var(--space-lg)">
+              জরুরি অনুরোধ জমা দিতে আপনার অ্যাকাউন্ট থাকতে হবে। একটি ৪-ডিজিট পিন সেট করুন বা আপনার পুরোনো পিন দিন।
+            </p>
+            <div style="max-width:250px;margin:0 auto var(--space-md)">
+              <input type="password" id="eq-pin" class="form-control" placeholder="••••" maxlength="4" inputmode="numeric" style="text-align:center;font-size:2rem;letter-spacing:1rem;height:60px" />
+            </div>
+
+            <!-- Step 3 Turnstile Status -->
+            <div id="eq-step3-turnstile-status" style="margin:1rem auto 1.5rem;">
+              <div style="display:inline-flex;align-items:center;gap:0.4rem;background:#ECFDF5;color:#059669;padding:0.45rem 0.95rem;border-radius:var(--radius-full);font-size:0.88rem;font-family:var(--font-bn);font-weight:600;border:1px solid #A7F3D0;">
+                <i class="fas fa-circle-check"></i> ক্যাপচা যাচাই সম্পন্ন
+              </div>
+            </div>
+            <button class="btn btn-emergency btn-xl btn-full" onclick="EmergencyModule.submitRequestWithAuth()">
+              <i class="fas fa-circle-check"></i> জমা দিন
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div id="emergency-success-section" style="display:none;text-align:center;padding:var(--space-2xl)">
+      <div class="reg-success-icon anim-heartbeat"><i class="fas fa-circle-check"></i></div>
+      <h2 style="font-family:var(--font-bn);color:var(--verified-green);margin-bottom:var(--space-sm)">অনুরোধ জমা হয়েছে!</h2>
+      <div style="background:var(--bg-card);border:1px solid rgba(255,23,68,0.2);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-xl) auto;max-width:400px">
+        <div style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:var(--space-md)">
+          <span class="bg-badge large" id="es-blood"></span>
+          <span class="emergency-badge"><span class="pulse-dot"></span> <i class="fas fa-clock"></i> যাচাই বাকি</span>
+        </div>
+        <div style="font-family:var(--font-bn);font-size:1rem;font-weight:700;margin-bottom:0.5rem" id="es-patient"></div>
+        <div style="font-size:0.85rem;color:var(--text-muted);font-family:var(--font-bn)" id="es-hospital"></div>
+        <div style="margin-top:var(--space-md);padding:var(--space-md);background:var(--bg-surface);border-radius:var(--radius-sm)">
+          <div style="font-size:0.75rem;color:var(--text-muted)">Request ID</div>
+          <div style="font-family:var(--font-mono);font-weight:700;color:var(--blood-light)" id="es-id"></div>
+        </div>
+      </div>
+      <p style="font-family:var(--font-bn);color:var(--text-secondary);max-width:400px;margin:0 auto var(--space-xl)">
+        Renewal Foundation শীঘ্রই আপনার তথ্য যাচাই করবে এবং ম্যাচিং দাতাদের জানাবে।
+      </p>
+      <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="location.reload()"><i class="fas fa-plus"></i> নতুন অনুরোধ</button>
+        <button class="btn btn-ghost btn-lg" data-page="home"><i class="fas fa-house"></i> হোমে যান</button>
+      </div>
+    </div>
+
+    <div class="glow-line" style="margin-top:var(--space-2xl);margin-bottom:var(--space-2xl)"></div>
+
+    <!-- Active Requests Now At The Bottom -->
+    <div style="margin-bottom:var(--space-xl)">
+      <h3 style="font-family:var(--font-bn);margin-bottom:var(--space-lg);display:flex;align-items:center;gap:0.5rem">
+        <i class="fas fa-clipboard-list" style="color:var(--blood-red)"></i> অন্যান্য সক্রিয় অনুরোধ
+      </h3>
+      <div id="active-requests-list" class="requests-grid"><!-- Rendered by JS --></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     DONOR DASHBOARD
+───────────────────────────────── -->
+<div id="view-dashboard" class="page-view dashboard-page">
+  <div style="background:var(--grad-hero);border-bottom:1px solid var(--border);padding:calc(64px + var(--space-xl)) 0 var(--space-xl)">
+    <div class="container">
+      <span class="section-tag"><i class="fas fa-gauge"></i> ড্যাশবোর্ড</span>
+      <h1 style="font-family:var(--font-bn);margin-top:var(--space-sm)">আমার প্রোফাইল</h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Auth Required State -->
+    <div id="dashboard-auth-prompt" style="display:none;text-align:center;padding:var(--space-2xl) 0;width:100%">
+      <div style="font-size:3.5rem;color:var(--text-muted);margin-bottom:var(--space-md)"><i class="fas fa-lock"></i></div>
+      <h2 style="font-family:var(--font-bn);margin-bottom:var(--space-sm)">অ্যাক্সেস সংরক্ষিত</h2>
+      <p style="color:var(--text-secondary);font-family:var(--font-bn);margin-bottom:var(--space-xl);font-size:1.05rem">ড্যাশবোর্ড দেখতে আপনাকে লগইন করতে হবে।</p>
+      <button class="btn btn-primary btn-lg" onclick="Modal.open('auth-modal')"><i class="fas fa-arrow-right-to-bracket"></i> লগইন করুন</button>
+    </div>
+
+    <!-- Incomplete Registration State -->
+    <div id="dashboard-newuser-prompt" style="display:none;text-align:center;padding:var(--space-2xl) 0;width:100%">
+      <div style="font-size:3.5rem;color:var(--blood-light);margin-bottom:var(--space-md)"><i class="fas fa-user-plus"></i></div>
+      <h2 style="font-family:var(--font-bn);margin-bottom:var(--space-sm)">রক্তদাতা তথ্য পূরণ করুন</h2>
+      <p style="color:var(--text-secondary);font-family:var(--font-bn);margin-bottom:var(--space-xl);font-size:1.05rem">আপনি লগইন আছেন (<span id="dashboard-newuser-phone"></span>)। রক্তদাতা ড্যাশবোর্ড সক্রিয় করতে আপনার তথ্য নিবন্ধন করুন।</p>
+      <button class="btn btn-primary btn-lg" onclick="App.navigate('register')"><i class="fas fa-pen-to-square"></i> নিবন্ধন ফরম পূরণ করুন</button>
+    </div>
+
+    <div class="dashboard-layout" id="dashboard-layout">
+
+      <!-- Sidebar -->
+      <aside class="dashboard-sidebar">
+        <div class="profile-card">
+          <div class="profile-avatar" id="dash-initials">ম</div>
+          <div class="profile-name" id="dash-name">—</div>
+          <div class="profile-blood">
+            <span class="bg-badge large" id="dash-blood">—</span>
+          </div>
+          <div id="dash-badge" class="donor-badge badge-registered" style="margin-top:0.5rem">—</div>
+          <div id="dash-google-badge" style="display:none;margin-top:0.4rem;font-size:0.8rem;background:rgba(34,197,94,0.12);color:#16a34a;border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:0.25rem 0.75rem;font-weight:600;font-family:var(--font-bn);align-items:center;gap:0.35rem;"></div>
+
+          <div style="margin-top:var(--space-md);display:flex;flex-direction:column;gap:0.4rem;align-items:center">
+            <div class="trust-bar-track" style="width:120px;height:10px">
+              <div class="trust-bar-fill" id="dash-trust-bar" style="width:0%"></div>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:0.9rem;color:var(--verified-green)"><i class="fas fa-star" style="color:#FFD700"></i> Trust: <span id="dash-trust">—</span>/100</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="text-align:left;font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">
+            <div style="margin-bottom:0.3rem"><i class="fas fa-location-dot"></i> <span id="dash-location">—</span></div>
+            <div style="margin-bottom:0.3rem"><i class="fas fa-calendar-days"></i> যোগদান: <span id="dash-join">—</span></div>
+            <div><i class="fas fa-droplet" style="color:var(--blood-red)"></i> মোট দান: <strong id="dash-donations" style="color:var(--blood-light)">—</strong> বার</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Verification Progress -->
+          <div style="text-align:left">
+            <div style="font-family:var(--font-bn);font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-secondary)">যাচাই স্তর</div>
+            <div id="dash-verify-chips"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Availability Toggle -->
+          <div style="text-align:left">
+            <div style="font-family:var(--font-bn);font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;color:var(--text-secondary)">আমার অবস্থা</div>
+            <div class="availability-toggle">
+              <div class="avail-option" data-avail="available"><i class="fas fa-circle" style="color:var(--verified-green)"></i> উপলব্ধ</div>
+              <div class="avail-option" data-avail="soon"><i class="fas fa-circle" style="color:var(--pending-amber)"></i> শীঘ্রই উপলব্ধ</div>
+              <div class="avail-option" data-avail="unavailable"><i class="fas fa-circle" style="color:var(--blood-red)"></i> যোগাযোগ করবেন না</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="dashboard-main-content">
+
+        <!-- Next Eligible -->
+        <div class="dashboard-section-card">
+          <div class="dashboard-section-title"><i class="fas fa-calendar-check" style="color:var(--blood-red)"></i> পরবর্তী রক্তদানের তারিখ</div>
+          <div id="dash-next-eligible"></div>
+        </div>
+
+        <!-- Donation History -->
+        <div class="dashboard-section-card">
+          <div class="dashboard-section-title"><i class="fas fa-clock-rotate-left" style="color:var(--blood-red)"></i> রক্তদানের ইতিহাস</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>তারিখ</th>
+                  <th>হাসপাতাল</th>
+                  <th>স্ট্যাটাস</th>
+                </tr>
+              </thead>
+              <tbody id="donation-history-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Verification Log -->
+        <div class="dashboard-section-card">
+          <div class="dashboard-section-title"><i class="fas fa-shield-halved" style="color:var(--blood-red)"></i> যাচাই লগ</div>
+          <div id="dash-verify-log"></div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dashboard-section-card">
+          <div class="dashboard-section-title"><i class="fas fa-bell" style="color:var(--blood-red)"></i> বিজ্ঞপ্তি</div>
+          <div id="dash-notifications"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     MAP PAGE
+───────────────────────────────── -->
+<div id="view-map" class="page-view map-page">
+  <div class="map-controls">
+    <div style="font-family:var(--font-bn);font-weight:700;font-size:1rem"><i class="fas fa-map-location-dot" style="color:var(--blood-red)"></i> রক্তদাতার মানচিত্র</div>
+    <select class="form-control" id="map-blood-filter" style="max-width:180px">
+      <option value="">সব গ্রুপ</option>
+    </select>
+    <span id="map-donor-count" style="font-size:0.85rem;color:var(--text-muted);font-family:var(--font-bn)"></span>
+    <div style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-bn);margin-left:auto">
+      <i class="fas fa-lock"></i> সঠিক ঠিকানা দেখানো হচ্ছে না — Privacy সুরক্ষিত
+    </div>
+  </div>
+  <div id="map"></div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     LEADERBOARD
+───────────────────────────────── -->
+<div id="view-leaderboard" class="page-view leaderboard-page">
+  <div class="leaderboard-header">
+    <div class="container">
+      <span class="section-tag"><i class="fas fa-trophy"></i> লিডারবোর্ড</span>
+      <h1 style="margin-top:var(--space-sm)">Life Savers — আগস্ট ২০২৬</h1>
+      <p style="font-family:var(--font-bn);color:var(--text-secondary)">
+        যারা সবচেয়ে বেশিবার রক্তদান করে মানুষের জীবন বাঁচিয়েছেন তাদের সম্মান জানানো হচ্ছে
+      </p>
+      <div style="margin-top:var(--space-md);font-size:0.85rem;color:var(--text-muted);font-family:var(--font-bn)">
+        <i class="fas fa-lock"></i> Privacy রক্ষার জন্য শুধু আদ্যক্ষর দেখানো হচ্ছে
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:var(--space-2xl)">
+    <div class="top-3-grid" id="top3-grid"><!-- Rendered by JS --></div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);padding:var(--space-xl)">
+      <div style="font-family:var(--font-bn);font-weight:700;font-size:1.1rem;margin-bottom:var(--space-lg);border-bottom:1px solid var(--border);padding-bottom:var(--space-md)">
+        <i class="fas fa-ranking-star" style="color:var(--blood-red)"></i> সম্পূর্ণ র‍্যাংকিং
+      </div>
+      <div id="full-leaderboard"><!-- Rendered by JS --></div>
+    </div>
+
+    <!-- Badge Tiers Explanation -->
+    <div style="margin-top:var(--space-2xl);background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);padding:var(--space-xl)">
+      <div style="font-family:var(--font-bn);font-weight:700;font-size:1.1rem;margin-bottom:var(--space-lg)"><i class="fas fa-medal" style="color:var(--blood-red)"></i> ব্যাজ সিস্টেম</div>
+      <div class="grid-2" style="gap:var(--space-md)">
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--bg-surface);border-radius:var(--radius-md)">
+          <span class="donor-badge badge-registered" style="flex-shrink:0"><i class="fas fa-droplet"></i> নিবন্ধিত দাতা</span>
+          <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">শুধু নিবন্ধন করেছেন</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--bg-surface);border-radius:var(--radius-md)">
+          <span class="donor-badge badge-bronze" style="flex-shrink:0"><i class="fas fa-award" style="color:#cd7f32"></i> ব্রোঞ্জ দাতা</span>
+          <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">১ বার সফল রক্তদান</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--bg-surface);border-radius:var(--radius-md)">
+          <span class="donor-badge badge-silver" style="flex-shrink:0"><i class="fas fa-award" style="color:#c0c0c0"></i> সিলভার দাতা</span>
+          <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">৩ বার সফল রক্তদান</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--bg-surface);border-radius:var(--radius-md)">
+          <span class="donor-badge badge-gold" style="flex-shrink:0"><i class="fas fa-crown" style="color:#ffd700"></i> গোল্ড দাতা</span>
+          <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">৫ বার সফল রক্তদান</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid rgba(0,191,255,0.2)">
+          <span class="donor-badge badge-lifesaver" style="flex-shrink:0"><i class="fas fa-gem" style="color:#00BFFF"></i> Life Saver</span>
+          <span style="font-size:0.82rem;color:var(--text-muted);font-family:var(--font-bn)">১০+ বার সফল রক্তদান</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════ -->
+
+<!-- Contact Donor Modal -->
+<div class="modal-overlay hidden" id="contact-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="Modal.close('contact-modal')"><i class="fas fa-xmark"></i></button>
+    <div style="font-size:2rem;text-align:center;margin-bottom:var(--space-sm);color:var(--blood-red)"><i class="fas fa-droplet"></i></div>
+    <h3 class="modal-title" style="text-align:center">যোগাযোগের অনুরোধ</h3>
+    <p style="font-family:var(--font-bn);text-align:center;color:var(--text-secondary);margin-bottom:var(--space-lg)">
+      দাতা: <strong id="contact-donor-name"></strong>
+      (<span class="bg-badge" id="contact-donor-blood"></span>)
+    </p>
+    <p style="font-family:var(--font-bn);font-size:0.85rem;color:var(--text-muted);background:var(--bg-surface);padding:var(--space-md);border-radius:var(--radius-md);margin-bottom:var(--space-lg)">
+      <i class="fas fa-lock"></i> আপনার অনুরোধ Renewal Foundation পাবে। তারা দাতার সাথে যোগাযোগ করে আপনাকে সংযুক্ত করবে।
+    </p>
+    <form id="contact-request-form">
+      <input type="hidden" id="contact-donor-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">রোগীর নাম <span class="required">*</span></label>
+          <input type="text" class="form-control" id="cr-patient" placeholder="রোগীর নাম" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">রক্তের গ্রুপ <span class="required">*</span></label>
+          <select class="form-control" id="cr-blood">
+            <option value="">গ্রুপ</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option>
+            <option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">হাসপাতাল <span class="required">*</span></label>
+        <input type="text" class="form-control" id="cr-hospital" placeholder="হাসপাতালের নাম ও এলাকা" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">কতটি ব্যাগ দরকার?</label>
+          <input type="number" class="form-control" id="cr-units" placeholder="১" min="1" max="10" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">আপনার নম্বর <span class="required">*</span></label>
+          <input type="tel" class="form-control" id="cr-phone" placeholder="01XXXXXXXXX" />
+        </div>
+      </div>
+
+      <!-- Cloudflare Turnstile for Contact Request -->
+      <div class="turnstile-container-wrapper" style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0.75rem auto;min-height:68px;">
+        <div id="contact-turnstile-container"></div>
+        <div id="contact-turnstile-error" style="display:none;color:var(--blood-red);font-size:0.82rem;margin-top:0.35rem;font-family:var(--font-bn);font-weight:600;">
+          <i class="fas fa-circle-exclamation"></i> অনুগ্রহ করে ক্যাপচা (Turnstile) যাচাই সম্পন্ন করুন
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-full btn-lg" onclick="DonorModule.submitContactRequest()">
+        <i class="fas fa-paper-plane"></i> অনুরোধ পাঠান
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Auth Modal (Login / Signup) -->
+<div class="modal-overlay hidden" id="auth-modal">
+  <div class="modal-box" style="max-width:350px">
+    <button class="modal-close" onclick="Modal.close('auth-modal')"><i class="fas fa-xmark"></i></button>
+    <div style="font-size:2rem;text-align:center;margin-bottom:var(--space-sm);color:var(--blood-red)"><i class="fas fa-user-shield"></i></div>
+    <h3 class="modal-title" style="text-align:center" id="auth-modal-title">লগইন</h3>
+    <p style="font-family:var(--font-bn);text-align:center;color:var(--text-secondary);margin-bottom:var(--space-lg)">
+      আপনার অ্যাকাউন্ট সুরক্ষিত করতে পিন ব্যবহার করুন
+    </p>
+    
+    <div class="form-group">
+      <label class="form-label">মোবাইল নম্বর <span class="required">*</span></label>
+      <input type="tel" class="form-control" id="auth-phone" placeholder="01XXXXXXXXX" pattern="^01[3-9]\d{8}$" maxlength="11" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">৪-ডিজিট গোপন পিন <span class="required">*</span></label>
+      <input type="password" class="form-control" id="auth-pin" placeholder="••••" maxlength="4" inputmode="numeric" />
+    </div>
+
+    <!-- Cloudflare Turnstile for Login -->
+    <div class="turnstile-container-wrapper" style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin:1rem auto 0.5rem;min-height:68px;">
+      <div id="auth-turnstile-container"></div>
+      <div id="auth-turnstile-error" style="display:none;color:var(--blood-red);font-size:0.82rem;margin-top:0.35rem;font-family:var(--font-bn);font-weight:600;">
+        <i class="fas fa-circle-exclamation"></i> অনুগ্রহ করে ক্যাপচা (Turnstile) যাচাই সম্পন্ন করুন
+      </div>
+    </div>
+    
+    <div style="margin-top:var(--space-md)">
+      <button class="btn btn-primary btn-full btn-lg" onclick="App.handleAuthSubmit()" id="auth-submit-btn">
+        <i class="fas fa-arrow-right-to-bracket"></i> এগিয়ে যান
+      </button>
+    </div>
+
+    <!-- Google Login Option -->
+    <div class="auth-divider" style="display:flex;align-items:center;margin:1.1rem 0;color:var(--text-muted);font-size:0.85rem;font-family:var(--font-bn);">
+      <span style="flex:1;height:1px;background:var(--border-color, #e2e8f0);"></span>
+      <span style="padding:0 0.8rem;">অথবা</span>
+      <span style="flex:1;height:1px;background:var(--border-color, #e2e8f0);"></span>
+    </div>
+    <div id="google-login-container" style="display:flex;justify-content:center;margin-bottom:0.75rem;min-height:44px;"></div>
+    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-top:var(--space-md);font-family:var(--font-bn)">
+      নতুন অ্যাকাউন্ট খুলতে "রক্তদাতা হিসেবে যুক্ত হোন" এ ক্লিক করুন।
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/donor.js"></script>
+<script src="js/emergency.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/leaderboard.js"></script>
+
+<script src="js/map.js"></script>
+
+<script>
+  // Ensure fresh file execution on any page show / back-forward cache restore
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) window.location.reload();
+  });
+
+  // Bootstrap
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set today's date as default for emergency form
+    const today = new Date().toISOString().split('T')[0];
+    const dateInputs = document.querySelectorAll('input[type=date]');
+    dateInputs.forEach(i => { if (!i.value) i.value = today; });
+
+    // Initialize app
+    App.init();
+
+    // Auto-add click handlers for CTA cards
+    document.querySelectorAll('.cta-card[data-page], [data-page]').forEach(el => {
+      if (!el.dataset.pageInit) {
+        el.dataset.pageInit = '1';
+        el.addEventListener('click', (e) => {
+          const pg = el.dataset.page;
+          if (pg) { e.preventDefault(); App.navigate(pg); App.closeMobileMenu(); }
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

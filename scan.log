@@ -1,0 +1,26 @@
+20:19:39 [!] No token - 60 API requests/hour and only public repos.
+20:19:39 [*] scan engine: scan.py 3.4 (telegram URL rule, 2026-11-05)  (git timeout: 900s)
+20:19:39 [*] Local mode: 1 path(s)
+20:19:39 [*] Scanning 1 target(s) with 1 parallel worker(s) ...
+20:19:39 [renewal-blood-network] -> start
+20:19:49 [1/1] [done] renewal-blood-network: 2 finding(s) in 10s
+20:19:49 
+20:19:49 --- renewal-blood-network (/storage/emulated/0/gitscanner/renewal-blood-network) ---
+20:19:49   [MEDIUM] Secret assignment (CLOUDFLARE_TURNSTILE_SITE_KEY)
+20:19:49     value  : 1x00000000000000000000AA
+20:19:49     status : STILL IN CURRENT FILES
+20:19:49     files  : .env.example:7, admin/js/admin.js:28, js/data.js:92
+20:19:49     history: .env.example:7 @ 9ba111d, admin/js/admin.js:28 @ 9ba111d, js/data.js:92 @ 9ba111d
+20:19:49   [MEDIUM] Secret assignment (CLOUDFLARE_TURNSTILE_SECRET_KEY)
+20:19:49     value  : 1x0000000000000000000000000000000AA
+20:19:49     status : STILL IN CURRENT FILES
+20:19:49     files  : .env.example:8
+20:19:49     history: .env.example:8 @ 9ba111d
+20:19:49 
+20:19:49 ===== Summary over 1 repo(s) in 10s: 2 finding(s) in 1 repo(s) =====
+20:19:49   renewal-blood-network: 0 HIGH, 2 MEDIUM, 0 LOW
+20:19:49 
+20:19:49 Next: rotate/revoke every real secret first. Deleting the file is not enough,
+20:19:49 because git history keeps it. Then purge history with git filter-repo or BFG.
+20:19:49 Also consider making affected repos private until cleaned.
+20:19:49 [*] Log written to /storage/emulated/0/gitscanner/scan.log
